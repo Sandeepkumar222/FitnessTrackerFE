@@ -6,8 +6,10 @@ import Exercise from "./excercise";
 import { Grid } from "@mui/material";
 import AddExercise from "./AddExercise";
 import Header from "./header";
+import ReactLoading from 'react-loading';
 
 function ExercisesPage() {
+  const [isReady, setIsReady] = React.useState(false);
   const prevCal = parseInt(localStorage.getItem("cb"));
   const [exercises, setExercises] = useState([]);
   const [burntCal, setBurntCal] = useState(prevCal);
@@ -24,12 +26,15 @@ function ExercisesPage() {
       headers: { "Content-Type": "application/json", "access-token" : "Bearer " + `${localStorage.getItem("token")}` },
     });
     setExercises(data)
+    setIsReady(true);
   }
 
   if(refresh===true){
     getData();
     setRefresh(false)
   }
+
+
 
 
 
@@ -138,7 +143,7 @@ function ExercisesPage() {
         </h3>{" "}
         <AddExercise refreshAddExercise = {(refresh)=>{setRefresh(refresh)}} />
         <br />
-        <Grid
+        {isReady? <Grid
           container
           // spacing={{ xs: 2, md: 3 }}
           // columns={{ xs: 4, sm: 8, md: 12 }} xs={2} sm={4} md={4}
@@ -155,7 +160,7 @@ function ExercisesPage() {
               />
             </Grid>
           ))}
-        </Grid>
+        </Grid> : <div className = "d-flex justify-content-center"> <ReactLoading  type="spinningBubbles" color="#1877f2" height={'20%'} width={'20%'} /> </div>}
         <br />
       </Container>
     </>
