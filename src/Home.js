@@ -8,6 +8,7 @@ const Home = () => {
 
   useEffect(() => {
     getDataUser();
+    localStorage.setItem("cb",0)
   }, []);
 
   let getDataUser = async () => {
