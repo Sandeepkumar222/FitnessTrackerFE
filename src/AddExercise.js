@@ -9,9 +9,7 @@ import { Button, Form } from "react-bootstrap";
 
 const AddExercise = (props) => {
 
-  const [pic, setPic] = useState(
-    "https://www.eguardtech.com/wp-content/uploads/2018/08/Network-Profile.png"
-  );
+  const [pic, setPic] = useState();
 
 
   // to show/hide update portion/component
@@ -29,6 +27,7 @@ const AddExercise = (props) => {
   };
 
   const converToBase = (file) => {
+    
     return new Promise((resolve, reject) => {
       const fileReader = new FileReader();
       fileReader.readAsDataURL(file);
@@ -128,7 +127,7 @@ const AddExercise = (props) => {
               className="align-top d-inline-block"
             />
             
-            <input type="file" accept = "image/png, image/gif, image/jpeg" onChange={(e) => changePic(e)} />
+            <input type="file" accept = "image/gif" onChange={(e) => changePic(e)} />
           </Col>
           <Col>
             <Row>
