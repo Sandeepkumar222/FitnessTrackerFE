@@ -44,18 +44,18 @@ const AddExercise = (props) => {
 
   /// function to upload data of the user
 
-  const handleUpload = async () => {
-    console.log(pic);
-    const { data } = await axios({
-      method: "post",
-      url :`https://fitness-tracker-node-123.herokuapp.com/exercises`,
-        headers: { "Content-Type": "application/json", "access-token" : "Bearer " + `${localStorage.getItem("token")}` },
-      data: {
-        proPic: pic,
-      },
-    });
-    console.log(data.value);
-  };
+//   const handleUpload = async () => {
+//     console.log(pic);
+//     const { data } = await axios({
+//       method: "post",
+//       url :`https://fitness-tracker-node-123.herokuapp.com/exercises`,
+//         headers: { "Content-Type": "application/json", "access-token" : "Bearer " + `${localStorage.getItem("token")}` },
+//       data: {
+//         proPic: pic,
+//       },
+//     });
+//     console.log(data.value);
+//   };
 
   /// function for validating the data
 
@@ -84,6 +84,9 @@ const AddExercise = (props) => {
       console.log(values);
 
       const handleAdd = async (values) => {
+        if(!values.title || !values.cals || !pic){
+          return alert("Please add GIF and fill all fields")
+        }
         const { data } = await axios({
           method: "post",
           url :`https://fitness-tracker-node-123.herokuapp.com/exercises`,
@@ -126,7 +129,6 @@ const AddExercise = (props) => {
             />
             
             <input type="file" accept = "image/png, image/gif, image/jpeg" onChange={(e) => changePic(e)} />
-            <button onClick={handleUpload}>Upload</button>
           </Col>
           <Col>
             <Row>
