@@ -125,7 +125,7 @@ const AddExercise = (props) => {
               className="align-top d-inline-block"
             />
             
-            <input type="file" onChange={(e) => changePic(e)} />
+            <input type="file" accept = "image/png, image/gif, image/jpeg" onChange={(e) => changePic(e)} />
             <button onClick={handleUpload}>Upload</button>
           </Col>
           <Col>
