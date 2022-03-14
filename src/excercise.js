@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 import { Card, Button, InputGroup, FormControl } from "react-bootstrap";
 import ModalAlert from "./modalDeleteAlert";
@@ -7,10 +8,30 @@ const Exercise = (props) => {
   const [showModal, setShowModal] = useState(false);
   const [warn, setwarn] = useState(false);
 
+  const handleDelete = async (id) => {
+    console.log(id);
+    const { data } = await axios({
+      method: "delete",
+      url: `https://fitness-tracker-node-123.herokuapp.com/exercises/${id}`,
+      headers: {
+        "Content-Type": "application/json",
+        "access-token": "Bearer " + `${localStorage.getItem("token")}`,
+      },
+    });
+    props.refreshAddExercise(true);
+  };
+
   return (
     <>
-      <Card style={{ width: "18rem" }}>
-        <Card.Img variant="top" src={props.pic} />
+      <Card style={{ width: "18rem", margin: "8px" }}>
+        <button
+          style={{ position: "absolute", right: 0 }}
+          type="button"
+          className="btn-close"
+          aria-label="Close"
+          onClick={() => handleDelete(props.id)}
+        ></button>
+        <Card.Img height={200} variant="top" src={props.pic} />
         <Card.Body>
           <Card.Title>{props.title}</Card.Title>
           <Card.Text>
@@ -28,21 +49,22 @@ const Exercise = (props) => {
               aria-describedby="basic-addon1"
             />
           </InputGroup>
-          {warn ? <label className ="text-danger">Add number of reps</label> : null}
+          {warn ? (
+            <label className="text-danger">Add number of reps</label>
+          ) : null}
           <Button
             variant="primary"
             onClick={() => {
               if (reps > 0) {
                 setShowModal(true);
-                const prevCal = parseInt(localStorage.getItem('cb'));
-                const calCount = Math.round((reps*props.cals) + prevCal);
-                localStorage.setItem('cb', calCount);
+                const prevCal = parseInt(localStorage.getItem("cb"));
+                const calCount = Math.round(reps * props.cals + prevCal);
+                localStorage.setItem("cb", calCount);
                 setReps(0);
-                setwarn(false)
+                setwarn(false);
                 props.ChangeBurntCal(calCount);
-              }
-              else{
-                setwarn(true)
+              } else {
+                setwarn(true);
               }
             }}
           >
