@@ -14,8 +14,6 @@ const About = () => {
   // to store the data retrieved from api
   const [userData, setUserData] = useState("");
 
-  
-
   // to show/hide update portion/component
   const [update, setUpdate] = useState(true);
 
@@ -28,17 +26,22 @@ const About = () => {
     try {
       let { data } = await axios({
         method: "get",
-        url: `https://fitness-tracker-node-123.herokuapp.com/users/${localStorage.getItem("id")}`,
+        url: `https://fitness-tracker-node-123.herokuapp.com/users/${localStorage.getItem(
+          "id"
+        )}`,
         headers: {
           "Content-Type": "application/json",
           "access-token": "Bearer " + `${localStorage.getItem("token")}`,
         },
       });
-      setUserData(data)
-      if(data.userStats){
-        localStorage.setItem("data",JSON.stringify(data.value.userStats))
-        }
-      
+      console.log(data);
+      setUserData(data);
+      if (data.proPic) {
+        setPic(data.proPic);
+      }
+      if (data.userStats) {
+        localStorage.setItem("data", JSON.stringify(data.userStats));
+      }
     } catch (e) {
       console.log(e);
     }
@@ -46,25 +49,32 @@ const About = () => {
 
   // function to convert image into base64 string II
 
-  const changePic = async (e) => {
-    const file = e.target.files[0];
-    const Base64 = await converToBase(file);
-    console.log(Base64);
-    setPic(Base64);
-  };
-
-  const converToBase = (file) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(file);
-
-      fileReader.onload = () => {
-        resolve(fileReader.result);
-      };
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-    });
+  const handlePic = (pics) => {
+    try {
+      if (!pics.name.match(/\.(jpg|jpeg|png|gif)$/)) {
+        alert("Please add valid picture!");
+        return;
+      }
+      console.log(pics);
+      const data = new FormData();
+      data.append("file", pics);
+      data.append("upload_preset", "chat-app-sandeep");
+      data.append("cloud_name", "sandeepcloud");
+      fetch("https://api.cloudinary.com/v1_1/sandeepcloud/image/upload", {
+        method: "post",
+        body: data,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          setPic(data.url.toString());
+          console.log(data.url.toString());
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {
+      alert("picture failed to add");
+    }
   };
 
   /// function to upload data of the user
@@ -125,13 +135,14 @@ const About = () => {
   };
 
   const formik = useFormik({
-    initialValues:  { 
-      name: "",
-      age: "",
-      weight : "",
-      gender: "",
-      height: "",
-      mail: "",
+    enableReinitialize: true,
+    initialValues: {
+      name: userData ? userData.name : "",
+      age: userData ? userData.age : "",
+      weight: userData ? userData.weight : "",
+      gender: userData ? userData.gender : "",
+      height: userData ? userData.height : "",
+      mail: userData ? userData.mail : "",
     },
     validate,
     onSubmit: (values) => {
@@ -154,7 +165,7 @@ const About = () => {
             mail: values.mail,
             gender: values.gender,
             proPic: pic,
-            weight : values.weight,
+            weight: values.weight,
           },
         });
         console.log(data.value);
@@ -186,7 +197,7 @@ const About = () => {
           <Row>
             <Col>
               <AvatarEditor
-                image={userData!==""? userData.proPic : pic}
+                image={userData ? userData.proPic : pic}
                 width={250}
                 height={250}
                 border={50}
@@ -246,7 +257,7 @@ const About = () => {
             <Row>
               <Col>
                 <AvatarEditor
-                  image={ pic}
+                  image={userData ? userData.proPic : pic}
                   width={250}
                   height={250}
                   border={50}
@@ -256,8 +267,11 @@ const About = () => {
                   className="align-top d-inline-block"
                 />
 
-                <input type="file" onChange={(e) => changePic(e)} />
-                <button onClick={handleUpload}>Upload</button>
+                <input
+                  type="file"
+                  accept={"image/jpg" || "image/png" || "image/jpeg"}
+                  onChange={(e) => handlePic(e.target.files[0])}
+                />
               </Col>
               <Col>
                 <Row>
@@ -267,7 +281,7 @@ const About = () => {
                       <Form.Control
                         type="text"
                         name="name"
-                        placeholder={userData? userData.name :"Enter your name"}
+                        placeholder="Enter your name"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.name}
@@ -284,7 +298,7 @@ const About = () => {
                       <Form.Control
                         type="mail"
                         name="mail"
-                        placeholder={userData? userData.mail :"Enter mail ID"}
+                        placeholder={"Enter mail ID"}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.mail}
@@ -301,7 +315,7 @@ const About = () => {
                       <Form.Control
                         type="number"
                         name="age"
-                        placeholder={userData? userData.age :"Enter your Age in years"}
+                        placeholder={"Enter your Age in years"}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.age}
@@ -317,7 +331,7 @@ const About = () => {
                       <Form.Control
                         type="number"
                         name="weight"
-                        placeholder={userData? userData.weight :"Enter your weight in Kgs"}
+                        placeholder={"Enter your weight in Kgs"}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.weight}
@@ -333,7 +347,7 @@ const About = () => {
                       <Form.Control
                         type="number"
                         name="height"
-                        placeholder={userData? userData.height :"Enter your height in cms"}
+                        placeholder={"Enter your height in cms"}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values.height}
