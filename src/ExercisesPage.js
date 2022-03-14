@@ -6,7 +6,7 @@ import Exercise from "./excercise";
 import { Grid } from "@mui/material";
 import AddExercise from "./AddExercise";
 import Header from "./header";
-import ReactLoading from 'react-loading';
+import ReactLoading from "react-loading";
 
 function ExercisesPage() {
   const [isReady, setIsReady] = React.useState(false);
@@ -21,30 +21,34 @@ function ExercisesPage() {
 
   const getData = async () => {
     let { data } = await axios({
-      method : "get",
-      url :`https://fitness-tracker-node-123.herokuapp.com/exercises`,
-      headers: { "Content-Type": "application/json", "access-token" : "Bearer " + `${localStorage.getItem("token")}` },
+      method: "get",
+      url: `https://fitness-tracker-node-123.herokuapp.com/exercises`,
+      headers: {
+        "Content-Type": "application/json",
+        "access-token": "Bearer " + `${localStorage.getItem("token")}`,
+      },
     });
-    setExercises(data)
+    setExercises(data);
     setIsReady(true);
-  }
+  };
 
-  if(refresh===true){
+  if (refresh === true) {
     getData();
-    setRefresh(false)
+    setRefresh(false);
   }
-
-
-
-
 
   const submitCalCount = async () => {
     if (parseInt(localStorage.getItem("cb")) !== 0) {
       setWarn(false);
       let { data } = await axios({
-        method : "get",
-        url :`https://fitness-tracker-node-123.herokuapp.com/users/${localStorage.getItem("id")}`,
-        headers: { "Content-Type": "application/json", "access-token" : "Bearer " + `${localStorage.getItem("token")}` },
+        method: "get",
+        url: `https://fitness-tracker-node-123.herokuapp.com/users/${localStorage.getItem(
+          "id"
+        )}`,
+        headers: {
+          "Content-Type": "application/json",
+          "access-token": "Bearer " + `${localStorage.getItem("token")}`,
+        },
       });
       let today = new Date().toISOString().slice(0, 10);
       // today = "2021-10-06";
@@ -83,22 +87,26 @@ function ExercisesPage() {
   const handleUpload = async (dateAndCal) => {
     const { data } = await axios({
       method: "put",
-      url :`https://fitness-tracker-node-123.herokuapp.com/users/${localStorage.getItem("id")}`,
-      headers: { "Content-Type": "application/json", "access-token" : "Bearer " + `${localStorage.getItem("token")}` },
+      url: `https://fitness-tracker-node-123.herokuapp.com/users/${localStorage.getItem(
+        "id"
+      )}`,
+      headers: {
+        "Content-Type": "application/json",
+        "access-token": "Bearer " + `${localStorage.getItem("token")}`,
+      },
       data: {
         userStats: dateAndCal,
       },
     });
-    if(data.value.userStats){
-      let date =data.value.userStats.map(e=>{
-        return e.date
-      })
-      let Calories =data.value.userStats.map(e=>{
-        return e.burntCals
-      })
-      localStorage.setItem("date",JSON.stringify(date))
-      localStorage.setItem("Calories",JSON.stringify(Calories))
-      
+    if (data.value.userStats) {
+      let date = data.value.userStats.map((e) => {
+        return e.date;
+      });
+      let Calories = data.value.userStats.map((e) => {
+        return e.burntCals;
+      });
+      localStorage.setItem("date", JSON.stringify(date));
+      localStorage.setItem("Calories", JSON.stringify(Calories));
     }
     // console.log(data.value);
   };
@@ -106,29 +114,33 @@ function ExercisesPage() {
   const handleNewUpload = async (newData) => {
     const { data } = await axios({
       method: "put",
-      url :`https://fitness-tracker-node-123.herokuapp.com/users/${localStorage.getItem("id")}`,
-      headers: { "Content-Type": "application/json", "access-token" : "Bearer " + `${localStorage.getItem("token")}` },
+      url: `https://fitness-tracker-node-123.herokuapp.com/users/${localStorage.getItem(
+        "id"
+      )}`,
+      headers: {
+        "Content-Type": "application/json",
+        "access-token": "Bearer " + `${localStorage.getItem("token")}`,
+      },
       data: {
         userStats: newData,
       },
     });
-    if(data.value.userStats){
-      let date =data.value.userStats.map(e=>{
-        return e.date
-      })
-      let Calories =data.value.userStats.map(e=>{
-        return e.burntCals
-      })
-      localStorage.setItem("date",JSON.stringify(date))
-      localStorage.setItem("Calories",JSON.stringify(Calories))
-      
-      }
+    if (data.value.userStats) {
+      let date = data.value.userStats.map((e) => {
+        return e.date;
+      });
+      let Calories = data.value.userStats.map((e) => {
+        return e.burntCals;
+      });
+      localStorage.setItem("date", JSON.stringify(date));
+      localStorage.setItem("Calories", JSON.stringify(Calories));
+    }
     // console.log(data.value);
   };
 
   return (
     <>
-    <Header />
+      <Header />
       <br />
 
       <Container className="justify-content-center">
@@ -141,31 +153,52 @@ function ExercisesPage() {
             <h4 className="danger">Do some exercise before hitting done</h4>
           ) : null}
         </h3>{" "}
-        <AddExercise refreshAddExercise = {(refresh)=>{setRefresh(refresh)}} />
+        <AddExercise
+          refreshAddExercise={(refresh) => {
+            setRefresh(refresh);
+          }}
+        />
         <br />
-        {isReady? <Grid
-          container
-          // spacing={{ xs: 2, md: 3 }}
-          // columns={{ xs: 4, sm: 8, md: 12 }} xs={2} sm={4} md={4}
-        >
-          {exercises.map((e, index) => (
-            <Grid item className="col-sm" key={index}>
-              <Exercise
-                title={e.title}
-                cals={e.cals}
-                pic={e.pic}
-                ChangeBurntCal={(burntCal) => {
-                  setBurntCal(burntCal);
-                }}
-              />
-            </Grid>
-          ))}
-        </Grid> : <div className = "d-flex justify-content-center"> <ReactLoading  type="spinningBubbles" color="#1877f2" height={'20%'} width={'20%'} /> </div>}
+        {isReady ? (
+          <Grid
+            container
+            spacing={{ xs: 4, md: 3 }}
+            columns={{ xs: 4, sm: 8, md: 12 }}
+          >
+            <>
+              {exercises.map((e, index) => (
+                <Grid item key={index}>
+                  <Exercise
+                    id={e._id}
+                    title={e.title}
+                    cals={e.cals}
+                    pic={e.pic}
+                    ChangeBurntCal={(burntCal) => {
+                      setBurntCal(burntCal);
+                    }}
+                    refreshAddExercise={(refresh) => {
+                      setRefresh(refresh);
+                    }}
+                  />
+                </Grid>
+              ))}
+            </>
+          </Grid>
+        ) : (
+          <div className="d-flex justify-content-center">
+            {" "}
+            <ReactLoading
+              type="spinningBubbles"
+              color="#1877f2"
+              height={"20%"}
+              width={"20%"}
+            />{" "}
+          </div>
+        )}
         <br />
       </Container>
     </>
   );
 }
-
 
 export default ExercisesPage;
